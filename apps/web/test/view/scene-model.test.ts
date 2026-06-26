@@ -1,7 +1,6 @@
 import { City, ServiceRegistry, type Diagnostic } from "@aws-city/domain";
 import { describe, expect, it } from "vitest";
-import { buildSceneModel } from "../../src/view/scene-model";
-import { gridToScreen } from "../../src/view/iso";
+import { buildSceneModel, cellToScreen } from "../../src/view/scene-model";
 import { layoutCity } from "../../src/view/layout";
 
 function registry(): ServiceRegistry {
@@ -32,7 +31,7 @@ describe("buildSceneModel", () => {
     const layout = layoutCity(city);
     const web = model.nodes.find((n) => n.id === "web")!;
     const cell = layout.get(web.id)!;
-    expect({ x: web.x, y: web.y }).toEqual(gridToScreen(cell.gx, cell.gy));
+    expect({ x: web.x, y: web.y }).toEqual(cellToScreen(cell.gx, cell.gy));
   });
 
   it("uses properties.name as the label, falling back to kind", () => {

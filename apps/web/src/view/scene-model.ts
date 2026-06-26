@@ -2,6 +2,19 @@ import type { City, Diagnostic, ServiceId, Severity } from "@aws-city/domain";
 import { gridToScreen } from "./iso";
 import { layoutCity } from "./layout";
 
+/**
+ * Spacing between grid cells, in screen pixels. Deliberately larger than the
+ * drawn tile (TILE_W/TILE_H in iso.ts) so buildings don't overlap and labels
+ * have room. Layout spacing and sprite size are separate concerns.
+ */
+export const CELL_W = 160;
+export const CELL_H = 80;
+
+/** Screen position of a grid cell, applying the layout spacing. */
+export function cellToScreen(gx: number, gy: number): { x: number; y: number } {
+  return gridToScreen(gx, gy, CELL_W, CELL_H);
+}
+
 export interface SceneNode {
   readonly id: ServiceId;
   readonly kind: string;
@@ -48,7 +61,7 @@ export function buildSceneModel(city: City, options: SceneOptions): SceneModel {
 
   const nodes: SceneNode[] = city.all().map((service) => {
     const cell = layout.get(service.id) ?? { gx: 0, gy: 0 };
-    const screen = gridToScreen(cell.gx, cell.gy);
+    const screen = cellToScreen(cell.gx, cell.gy);
     const severity = worstSeverity(service.id, diagnostics);
     const nameProp = service.properties["name"];
     const label = typeof nameProp === "string" ? nameProp : service.kind;
@@ -68,8 +81,8 @@ export function buildSceneModel(city: City, options: SceneOptions): SceneModel {
   const edges: SceneEdge[] = city.connections().map((connection) => {
     const from = layout.get(connection.from) ?? { gx: 0, gy: 0 };
     const to = layout.get(connection.to) ?? { gx: 0, gy: 0 };
-    const fromScreen = gridToScreen(from.gx, from.gy);
-    const toScreen = gridToScreen(to.gx, to.gy);
+    const fromScreen = cellToScreen(from.gx, from.gy);
+    const toScreen = cellToScreen(to.gx, to.gy);
     return {
       from: connection.from,
       to: connection.to,

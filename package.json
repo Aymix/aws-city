@@ -18,6 +18,7 @@
     "boundaries": "depcruise packages apps --config .dependency-cruiser.cjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.1",
     "@types/node": "^22.5.0",
