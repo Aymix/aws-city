@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aws-city/application": "workspace:*",
+    "@aws-city/content": "workspace:*",
     "@aws-city/domain": "workspace:*",
     "phaser": "^3.80.1",
     "react": "^18.3.1",
