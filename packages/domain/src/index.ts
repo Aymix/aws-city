@@ -21,6 +21,14 @@ export {
   type Hop,
 } from "./engines/networking/networking-engine";
 
+export {
+  ValidationEngine,
+  type Diagnostic,
+  type Severity,
+  type ValidationRule,
+  type ValidationContext,
+} from "./engines/validation/validation-engine";
+
 // Registry (the extensibility keystone)
 export { ServiceRegistry } from "./registry/service-registry";
 export type {
