@@ -224,3 +224,26 @@ describe("City — removing services", () => {
     expect(() => city.remove(serviceId("ghost"))).toThrow(DomainError);
   });
 });
+
+describe("City — updating properties", () => {
+  let city: City;
+  beforeEach(() => {
+    city = new City(testRegistry());
+  });
+
+  it("shallow-merges a patch over existing properties", () => {
+    const vpc = city.add("vpc");
+    const ec2 = city.add("ec2", {
+      in: city.add("subnet", { in: vpc.id }).id,
+      properties: { name: "web", instanceType: "t3.micro" },
+    });
+    const updated = city.updateProperties(ec2.id, { instanceType: "m5.large" });
+    expect(updated.properties).toEqual({ name: "web", instanceType: "m5.large" });
+    // the change is persisted in the city
+    expect(city.require(ec2.id).properties["instanceType"]).toBe("m5.large");
+  });
+
+  it("rejects updating a non-existent service", () => {
+    expect(() => city.updateProperties(serviceId("ghost"), { x: 1 })).toThrow(DomainError);
+  });
+});

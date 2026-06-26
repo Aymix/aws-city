@@ -3,3 +3,9 @@
 export { awsServiceDefinitions, createAwsRegistry } from "./aws";
 export { awsValidationRules, createAwsValidationEngine } from "./aws/rules";
 export { buildPublicWebServer, buildPrivateDatabase } from "./topologies/reference";
+export {
+  puzzles,
+  fixSecurityGroupPuzzle,
+  addInternetGatewayPuzzle,
+  fixPublicDatabasePuzzle,
+} from "./puzzles";

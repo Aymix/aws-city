@@ -9,6 +9,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@aws-city/application": "workspace:*",
     "@aws-city/domain": "workspace:*"
   }
 }
