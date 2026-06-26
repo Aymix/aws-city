@@ -59,6 +59,9 @@ importers:
       '@aws-city/application':
         specifier: workspace:*
         version: link:../../packages/application
+      '@aws-city/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@aws-city/domain':
         specifier: workspace:*
         version: link:../../packages/domain
