@@ -89,6 +89,9 @@ importers:
 
   packages/content:
     dependencies:
+      '@aws-city/application':
+        specifier: workspace:*
+        version: link:../application
       '@aws-city/domain':
         specifier: workspace:*
         version: link:../domain

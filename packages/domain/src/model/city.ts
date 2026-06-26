@@ -85,6 +85,14 @@ export class City {
     this.services.delete(id);
   }
 
+  /** Shallow-merges a property patch into an existing service, returning it. */
+  updateProperties(id: ServiceId, patch: Record<string, unknown>): Service {
+    const existing = this.require(id);
+    const updated: Service = { ...existing, properties: { ...existing.properties, ...patch } };
+    this.services.set(id, updated);
+    return updated;
+  }
+
   /** Creates a typed edge between two existing, distinct services. */
   connect(from: ServiceId, to: ServiceId, type: string): Connection {
     invariant(this.services.has(from), `Connection source "${from}" does not exist`);
