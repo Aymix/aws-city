@@ -29,6 +29,25 @@ export {
   type ValidationContext,
 } from "./engines/validation/validation-engine";
 
+// Simulation (the heartbeat)
+export {
+  SimulationEngine,
+  type SimulationSystem,
+  type SystemContext,
+  type SimulationEvent,
+  type TickResult,
+} from "./simulation/simulation-engine";
+export {
+  createInitialState,
+  getMetrics,
+  setMetrics,
+  nextRandom,
+  type WorldState,
+  type ServiceMetrics,
+  type InitialStateOptions,
+} from "./simulation/world-state";
+export { EventBus, type Listener } from "./simulation/event-bus";
+
 // Registry (the extensibility keystone)
 export { ServiceRegistry } from "./registry/service-registry";
 export type {
