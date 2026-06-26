@@ -10,6 +10,17 @@ export { Port } from "./model/value-objects/port";
 export { CidrBlock } from "./model/value-objects/cidr-block";
 export { Connection } from "./model/value-objects/connection";
 
+// Engines
+export {
+  NetworkingEngine,
+  type NetworkEndpoint,
+  type ReachabilityQuery,
+  type ReachabilityResult,
+  type BlockedReason,
+  type BlockedCode,
+  type Hop,
+} from "./engines/networking/networking-engine";
+
 // Registry (the extensibility keystone)
 export { ServiceRegistry } from "./registry/service-registry";
 export type {
