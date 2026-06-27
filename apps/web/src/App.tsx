@@ -1,12 +1,13 @@
-import type { Command } from "@aws-city/application";
-import { createAwsRegistry, createAwsValidationEngine, puzzles } from "@aws-city/content";
+import type { Command, Hint } from "@aws-city/application";
+import { createAwsRegistry, createAwsValidationEngine, createHintProvider, puzzles } from "@aws-city/content";
 import { CostEngine, SecurityEngine, type ServiceId } from "@aws-city/domain";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { GameCanvas } from "./render/GameCanvas";
 import { PuzzleSession } from "./state/puzzle-session";
 import { buildSceneModel } from "./view/scene-model";
 import { DiagnosticsPanel } from "./ui/DiagnosticsPanel";
 import { HeaderBar } from "./ui/HeaderBar";
+import { HintPanel } from "./ui/HintPanel";
 import { ServiceInspector } from "./ui/ServiceInspector";
 import { WinBanner } from "./ui/WinBanner";
 
@@ -37,6 +38,25 @@ export function App(): JSX.Element {
       }),
     [snapshot],
   );
+
+  // Tiered hints, reset whenever the puzzle or move count changes.
+  const hintProvider = useMemo(() => createHintProvider(), []);
+  const [hints, setHints] = useState<readonly Hint[]>([]);
+  const [revealed, setRevealed] = useState(0);
+  useEffect(() => {
+    setHints([]);
+    setRevealed(0);
+  }, [puzzleId, snapshot.moves]);
+  const onReveal = (): void => {
+    if (hints.length === 0) {
+      void hintProvider.hints({ diagnostics: snapshot.diagnostics }).then((h) => {
+        setHints(h);
+        setRevealed(1);
+      });
+    } else {
+      setRevealed((r) => Math.min(r + 1, hints.length));
+    }
+  };
 
   const selectedService = snapshot.selectedId ? snapshot.city.get(snapshot.selectedId) ?? null : null;
   const onSelect = (id: ServiceId): void => session.select(id);
@@ -76,6 +96,7 @@ export function App(): JSX.Element {
         ) : null}
         <ServiceInspector service={selectedService} onCommand={onCommand} />
         <DiagnosticsPanel diagnostics={snapshot.diagnostics} onSelect={onSelect} />
+        <HintPanel hints={hints} revealed={revealed} onReveal={onReveal} />
       </aside>
     </div>
   );
