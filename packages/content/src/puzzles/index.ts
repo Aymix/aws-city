@@ -88,8 +88,46 @@ export const fixPublicDatabasePuzzle: Puzzle = {
   },
 };
 
+/** A correctly-working web server running on a wildly oversized instance. */
+export const rightSizeInstancePuzzle: Puzzle = {
+  id: "right-size-instance",
+  title: "The Overbuilt Tower",
+  briefing:
+    "The web server works, but it's running on an enormous, expensive instance. Keep it reachable while getting the monthly bill under $150.",
+  build: () => {
+    const city = new City(createAwsRegistry());
+    const vpc = city.add("vpc", { id: "vpc" });
+    const subnet = city.add("subnet", { id: "sn", in: vpc.id, properties: { public: true } });
+    const igw = city.add("internet-gateway", { id: "igw" });
+    city.connect(igw.id, vpc.id, "attached-to");
+    const rt = city.add("route-table", { id: "rt", in: vpc.id });
+    city.connect(rt.id, subnet.id, "associated-with");
+    city.connect(rt.id, igw.id, "routes-to");
+    city.add("ec2", {
+      id: "web",
+      in: subnet.id,
+      properties: { name: "web", expose: 443, instanceType: "m5.4xlarge" },
+    });
+    const sg = city.add("security-group", {
+      id: "sg",
+      in: vpc.id,
+      properties: { ingress: [{ port: 443, cidr: "0.0.0.0/0" }] },
+    });
+    city.connect(sg.id, serviceId("web"), "attached-to");
+    return city;
+  },
+  goal: {
+    kind: "all",
+    goals: [
+      { kind: "reachable", from: "internet", to: serviceId("web"), port: 443 },
+      { kind: "monthly-cost-at-most", max: 150 },
+    ],
+  },
+};
+
 export const puzzles: readonly Puzzle[] = [
   fixSecurityGroupPuzzle,
   addInternetGatewayPuzzle,
   fixPublicDatabasePuzzle,
+  rightSizeInstancePuzzle,
 ];

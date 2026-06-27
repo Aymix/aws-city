@@ -1,8 +1,19 @@
-import { DomainError, type City, type Diagnostic, type ValidationEngine } from "@aws-city/domain";
+import {
+  DomainError,
+  type City,
+  type CostEngine,
+  type Diagnostic,
+  type ValidationEngine,
+} from "@aws-city/domain";
 import type { Command } from "../../commands/command";
 import { executeCommand } from "../../commands/execute-command";
-import { evaluateGoal } from "./goal";
+import { evaluateGoal, type GoalContext } from "./goal";
 import type { Puzzle } from "./puzzle";
+
+/** Optional engines a puzzle's goals may need (cost for FinOps, …). */
+export interface PuzzleEngines {
+  readonly cost?: CostEngine;
+}
 
 export interface CommandResult {
   readonly ok: boolean;
@@ -32,6 +43,7 @@ export class PuzzleController {
   constructor(
     private readonly puzzle: Puzzle,
     private readonly validation: ValidationEngine,
+    private readonly engines: PuzzleEngines = {},
   ) {
     this.cityState = puzzle.build();
   }
@@ -40,8 +52,16 @@ export class PuzzleController {
     return this.cityState;
   }
 
+  private goalContext(): GoalContext {
+    return {
+      city: this.cityState,
+      validation: this.validation,
+      ...(this.engines.cost ? { cost: this.engines.cost } : {}),
+    };
+  }
+
   get solved(): boolean {
-    return evaluateGoal(this.puzzle.goal, { city: this.cityState, validation: this.validation });
+    return evaluateGoal(this.puzzle.goal, this.goalContext());
   }
 
   diagnostics(): readonly Diagnostic[] {

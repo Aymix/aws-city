@@ -8,4 +8,5 @@ export {
   fixSecurityGroupPuzzle,
   addInternetGatewayPuzzle,
   fixPublicDatabasePuzzle,
+  rightSizeInstancePuzzle,
 } from "./puzzles";

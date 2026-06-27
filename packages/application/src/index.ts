@@ -10,6 +10,7 @@ export {
   PuzzleController,
   type CommandResult,
   type PuzzleStatus,
+  type PuzzleEngines,
 } from "./modes/puzzle/puzzle-controller";
 
 export { SandboxController, type SandboxResult } from "./modes/sandbox/sandbox-controller";

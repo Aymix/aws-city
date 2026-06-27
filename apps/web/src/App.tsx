@@ -1,6 +1,6 @@
 import type { Command } from "@aws-city/application";
-import { createAwsValidationEngine, puzzles } from "@aws-city/content";
-import type { ServiceId } from "@aws-city/domain";
+import { createAwsRegistry, createAwsValidationEngine, puzzles } from "@aws-city/content";
+import { CostEngine, type ServiceId } from "@aws-city/domain";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { GameCanvas } from "./render/GameCanvas";
 import { PuzzleSession } from "./state/puzzle-session";
@@ -16,7 +16,7 @@ export function App(): JSX.Element {
   // A fresh session per selected puzzle.
   const session = useMemo(() => {
     const puzzle = puzzles.find((p) => p.id === puzzleId) ?? puzzles[0]!;
-    return new PuzzleSession(puzzle, createAwsValidationEngine());
+    return new PuzzleSession(puzzle, createAwsValidationEngine(), new CostEngine(createAwsRegistry()));
   }, [puzzleId]);
 
   const snapshot = useSyncExternalStore(

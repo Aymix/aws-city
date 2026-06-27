@@ -15,6 +15,8 @@ const COMMON_PORTS: ReadonlyArray<{ port: number; label: string }> = [
 
 const WORLD = "0.0.0.0/0";
 
+const INSTANCE_TYPES = ["t3.micro", "t3.small", "t3.medium", "m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge"];
+
 interface IngressRule {
   readonly port: number;
   readonly cidr: string;
@@ -41,6 +43,7 @@ export function ServiceInspector({ service, onCommand }: ServiceInspectorProps):
   }
 
   const isSecurityGroup = service.kind === "security-group";
+  const isInstance = service.kind === "ec2";
   const open = isSecurityGroup ? openPorts(service) : new Set<number>();
 
   const toggle = (port: number): void => {
@@ -68,6 +71,26 @@ export function ServiceInspector({ service, onCommand }: ServiceInspectorProps):
             </label>
           ))}
         </fieldset>
+      ) : isInstance ? (
+        <label style={{ display: "block", fontSize: 13 }}>
+          Instance type:{" "}
+          <select
+            value={String(service.properties["instanceType"] ?? "t3.micro")}
+            onChange={(e) =>
+              onCommand({
+                type: "update-properties",
+                id: service.id,
+                properties: { instanceType: e.target.value },
+              })
+            }
+          >
+            {INSTANCE_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </label>
       ) : (
         <pre style={{ fontSize: 12, background: "#243047", padding: 8, borderRadius: 4, overflow: "auto" }}>
           {JSON.stringify(service.properties, null, 2)}
