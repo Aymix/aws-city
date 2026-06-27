@@ -1,17 +1,18 @@
 import type { Command, Hint } from "@aws-city/application";
 import { createAwsRegistry, createAwsValidationEngine, createHintProvider, puzzles } from "@aws-city/content";
 import { CostEngine, SecurityEngine, type ServiceId } from "@aws-city/domain";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { GameCanvas } from "./render/GameCanvas";
 import { PuzzleSession } from "./state/puzzle-session";
 import { buildSceneModel } from "./view/scene-model";
 import { DiagnosticsPanel } from "./ui/DiagnosticsPanel";
+import { EditorView } from "./ui/EditorView";
 import { HeaderBar } from "./ui/HeaderBar";
 import { HintPanel } from "./ui/HintPanel";
 import { ServiceInspector } from "./ui/ServiceInspector";
 import { WinBanner } from "./ui/WinBanner";
 
-export function App(): JSX.Element {
+function PuzzleView(): JSX.Element {
   const [puzzleId, setPuzzleId] = useState(puzzles[0]!.id);
 
   // A fresh session per selected puzzle.
@@ -98,6 +99,33 @@ export function App(): JSX.Element {
         <DiagnosticsPanel diagnostics={snapshot.diagnostics} onSelect={onSelect} />
         <HintPanel hints={hints} revealed={revealed} onReveal={onReveal} />
       </aside>
+    </div>
+  );
+}
+
+const TAB_BTN = (active: boolean): CSSProperties => ({
+  padding: "8px 16px",
+  background: active ? "#1b263b" : "transparent",
+  color: "#e0e1dd",
+  border: "none",
+  borderBottom: active ? "2px solid #5fa8d3" : "2px solid transparent",
+  cursor: "pointer",
+  fontSize: 13,
+});
+
+export function App(): JSX.Element {
+  const [mode, setMode] = useState<"puzzle" | "sandbox">("puzzle");
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#0d1b2a" }}>
+      <nav style={{ display: "flex", background: "#11203a", borderBottom: "1px solid #1b263b" }}>
+        <button style={TAB_BTN(mode === "puzzle")} onClick={() => setMode("puzzle")}>
+          Puzzles
+        </button>
+        <button style={TAB_BTN(mode === "sandbox")} onClick={() => setMode("sandbox")}>
+          Sandbox
+        </button>
+      </nav>
+      <div style={{ flex: 1, minHeight: 0 }}>{mode === "puzzle" ? <PuzzleView /> : <EditorView />}</div>
     </div>
   );
 }

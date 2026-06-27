@@ -20,3 +20,5 @@ export type { Incident } from "./modes/incident/incident";
 export { IncidentSession, type IncidentResult } from "./modes/incident/incident-session";
 
 export type { Hint, HintTier, HintRequest, HintProvider } from "./hints/hint";
+
+export { encodeShare, decodeShare, buildShareUrl, parseShareUrl } from "./share/share";
