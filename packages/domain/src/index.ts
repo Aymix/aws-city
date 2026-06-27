@@ -29,6 +29,13 @@ export {
   type ValidationContext,
 } from "./engines/validation/validation-engine";
 
+export {
+  CostEngine,
+  createCostSystem,
+  HOURS_PER_MONTH,
+  type CostLine,
+} from "./engines/cost/cost-engine";
+
 // Simulation (the heartbeat)
 export {
   SimulationEngine,

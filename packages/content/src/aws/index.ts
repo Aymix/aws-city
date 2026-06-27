@@ -1,4 +1,20 @@
-import { ServiceRegistry, type ServiceDefinition } from "@aws-city/domain";
+import { ServiceRegistry, type Service, type ServiceDefinition } from "@aws-city/domain";
+
+/** Indicative on-demand hourly prices (USD), us-east-1-ish. Tunable game data. */
+const EC2_HOURLY: Record<string, number> = {
+  "t3.micro": 0.0104,
+  "t3.small": 0.0208,
+  "t3.medium": 0.0416,
+  "m5.large": 0.096,
+  "m5.xlarge": 0.192,
+  "m5.2xlarge": 0.384,
+  "m5.4xlarge": 0.768,
+};
+
+function ec2Hourly(service: Service): number {
+  const type = service.properties["instanceType"];
+  return (typeof type === "string" ? EC2_HOURLY[type] : undefined) ?? EC2_HOURLY["t3.micro"]!;
+}
 
 /**
  * The AWS service pack (M1 subset). Each entry is a {@link ServiceDefinition}
@@ -32,6 +48,7 @@ export const awsServiceDefinitions: readonly ServiceDefinition[] = [
     displayName: "EC2 Instance",
     containment: { allowedIn: ["subnet"] },
     defaults: { instanceType: "t3.micro" },
+    cost: ec2Hourly,
   },
   {
     kind: "security-group",
@@ -62,6 +79,7 @@ export const awsServiceDefinitions: readonly ServiceDefinition[] = [
     category: "network",
     displayName: "NAT Gateway",
     containment: { allowedIn: ["subnet"] },
+    cost: () => 0.045,
   },
   {
     kind: "iam-role",

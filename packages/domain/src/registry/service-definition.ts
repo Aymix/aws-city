@@ -1,3 +1,5 @@
+import type { Service } from "../model/service";
+
 /**
  * The set of cloud providers the game can model. Only "aws" is populated in M1;
  * the others exist so the type (and the engines that switch on it) are ready for
@@ -42,4 +44,9 @@ export interface ServiceDefinition {
   readonly containment: ContainmentRule;
   /** Default property values applied when a service of this kind is created. */
   readonly defaults?: Readonly<Record<string, unknown>>;
+  /**
+   * Hourly operating cost (USD) for an instance of this kind. May depend on the
+   * service's properties (e.g. EC2 instance type). Consumed by the cost engine.
+   */
+  readonly cost?: (service: Service) => number;
 }

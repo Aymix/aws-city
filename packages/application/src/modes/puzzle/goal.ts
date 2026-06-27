@@ -1,6 +1,8 @@
 import {
   NetworkingEngine,
+  invariant,
   type City,
+  type CostEngine,
   type NetworkEndpoint,
   type ServiceId,
   type Severity,
@@ -26,12 +28,14 @@ export type Goal =
       readonly to: ServiceId;
       readonly port: number;
     }
+  | { readonly kind: "monthly-cost-at-most"; readonly max: number }
   | { readonly kind: "all"; readonly goals: readonly Goal[] }
   | { readonly kind: "any"; readonly goals: readonly Goal[] };
 
 export interface GoalContext {
   readonly city: City;
   readonly validation: ValidationEngine;
+  readonly cost?: CostEngine;
 }
 
 const SEVERITY_RANK: Record<Severity, number> = { error: 0, warning: 1, info: 2 };
@@ -60,6 +64,9 @@ export function evaluateGoal(goal: Goal, ctx: GoalContext): boolean {
         to: goal.to,
         port: goal.port,
       }).reachable;
+    case "monthly-cost-at-most":
+      invariant(ctx.cost !== undefined, "monthly-cost goal requires a cost engine in the context");
+      return ctx.cost.monthlyCost(ctx.city) <= goal.max;
     case "all":
       return goal.goals.every((g) => evaluateGoal(g, ctx));
     case "any":

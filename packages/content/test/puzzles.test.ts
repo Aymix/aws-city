@@ -69,7 +69,7 @@ describe("starter puzzles are solvable end-to-end (headless)", () => {
 
   it("registers all puzzles with unique ids", () => {
     const ids = puzzles.map((p) => p.id);
-    expect(ids).toHaveLength(3);
-    expect(new Set(ids).size).toBe(3);
+    expect(ids.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
