@@ -4,7 +4,14 @@ import {
   type CommandResult,
   type Puzzle,
 } from "@aws-city/application";
-import type { City, CostEngine, Diagnostic, ServiceId, ValidationEngine } from "@aws-city/domain";
+import type {
+  City,
+  CostEngine,
+  Diagnostic,
+  SecurityEngine,
+  ServiceId,
+  ValidationEngine,
+} from "@aws-city/domain";
 
 /** An immutable view of the session, consumed by React and the Phaser scene. */
 export interface PuzzleSnapshot {
@@ -37,8 +44,12 @@ export class PuzzleSession {
     private readonly puzzle: Puzzle,
     validation: ValidationEngine,
     cost?: CostEngine,
+    security?: SecurityEngine,
   ) {
-    this.controller = new PuzzleController(puzzle, validation, cost ? { cost } : {});
+    this.controller = new PuzzleController(puzzle, validation, {
+      ...(cost ? { cost } : {}),
+      ...(security ? { security } : {}),
+    });
     this.snapshot = this.build();
   }
 

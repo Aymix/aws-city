@@ -3,6 +3,7 @@ import {
   type City,
   type CostEngine,
   type Diagnostic,
+  type SecurityEngine,
   type ValidationEngine,
 } from "@aws-city/domain";
 import type { Command } from "../../commands/command";
@@ -10,9 +11,10 @@ import { executeCommand } from "../../commands/execute-command";
 import { evaluateGoal, type GoalContext } from "./goal";
 import type { Puzzle } from "./puzzle";
 
-/** Optional engines a puzzle's goals may need (cost for FinOps, …). */
+/** Optional engines a puzzle's goals may need (cost for FinOps, security for SecOps). */
 export interface PuzzleEngines {
   readonly cost?: CostEngine;
+  readonly security?: SecurityEngine;
 }
 
 export interface CommandResult {
@@ -57,6 +59,7 @@ export class PuzzleController {
       city: this.cityState,
       validation: this.validation,
       ...(this.engines.cost ? { cost: this.engines.cost } : {}),
+      ...(this.engines.security ? { security: this.engines.security } : {}),
     };
   }
 
