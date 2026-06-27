@@ -89,6 +89,13 @@ export const awsServiceDefinitions: readonly ServiceDefinition[] = [
     containment: { allowedIn: [] },
     defaults: { policies: [] },
   },
+  {
+    kind: "waf",
+    provider: "aws",
+    category: "security",
+    displayName: "WAF",
+    containment: { allowedIn: [] },
+  },
 ];
 
 /** Builds a {@link ServiceRegistry} seeded with the AWS service pack. */

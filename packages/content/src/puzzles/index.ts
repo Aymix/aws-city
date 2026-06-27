@@ -125,9 +125,37 @@ export const rightSizeInstancePuzzle: Puzzle = {
   },
 };
 
+/** A database exposed to the internet; an exfiltration attack must be repelled. */
+export const repelDataBreachPuzzle: Puzzle = {
+  id: "repel-data-breach",
+  title: "Seal the Vault",
+  briefing:
+    "Attackers are exfiltrating the bank vault (database) straight from the internet. Cut off public access to repel the breach.",
+  build: () => {
+    const city = new City(createAwsRegistry());
+    const vpc = city.add("vpc", { id: "vpc" });
+    const subnet = city.add("subnet", { id: "sn", in: vpc.id, properties: { public: true } });
+    const igw = city.add("internet-gateway", { id: "igw" });
+    city.connect(igw.id, vpc.id, "attached-to");
+    const rt = city.add("route-table", { id: "rt", in: vpc.id });
+    city.connect(rt.id, subnet.id, "associated-with");
+    city.connect(rt.id, igw.id, "routes-to");
+    city.add("ec2", { id: "db", in: subnet.id, properties: { role: "database", port: 5432 } });
+    const sg = city.add("security-group", {
+      id: "sg",
+      in: vpc.id,
+      properties: { ingress: [{ port: 5432, cidr: "0.0.0.0/0" }] },
+    });
+    city.connect(sg.id, serviceId("db"), "attached-to");
+    return city;
+  },
+  goal: { kind: "attack-repelled", attack: { kind: "db-exfiltration" } },
+};
+
 export const puzzles: readonly Puzzle[] = [
   fixSecurityGroupPuzzle,
   addInternetGatewayPuzzle,
   fixPublicDatabasePuzzle,
   rightSizeInstancePuzzle,
+  repelDataBreachPuzzle,
 ];

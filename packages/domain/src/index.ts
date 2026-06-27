@@ -36,6 +36,13 @@ export {
   type CostLine,
 } from "./engines/cost/cost-engine";
 
+export {
+  SecurityEngine,
+  type Attack,
+  type AttackResult,
+  type Posture,
+} from "./engines/security/security-engine";
+
 // Simulation (the heartbeat)
 export {
   SimulationEngine,

@@ -1,9 +1,11 @@
 import {
   NetworkingEngine,
   invariant,
+  type Attack,
   type City,
   type CostEngine,
   type NetworkEndpoint,
+  type SecurityEngine,
   type ServiceId,
   type Severity,
   type ValidationEngine,
@@ -29,6 +31,7 @@ export type Goal =
       readonly port: number;
     }
   | { readonly kind: "monthly-cost-at-most"; readonly max: number }
+  | { readonly kind: "attack-repelled"; readonly attack: Attack }
   | { readonly kind: "all"; readonly goals: readonly Goal[] }
   | { readonly kind: "any"; readonly goals: readonly Goal[] };
 
@@ -36,6 +39,7 @@ export interface GoalContext {
   readonly city: City;
   readonly validation: ValidationEngine;
   readonly cost?: CostEngine;
+  readonly security?: SecurityEngine;
 }
 
 const SEVERITY_RANK: Record<Severity, number> = { error: 0, warning: 1, info: 2 };
@@ -67,6 +71,9 @@ export function evaluateGoal(goal: Goal, ctx: GoalContext): boolean {
     case "monthly-cost-at-most":
       invariant(ctx.cost !== undefined, "monthly-cost goal requires a cost engine in the context");
       return ctx.cost.monthlyCost(ctx.city) <= goal.max;
+    case "attack-repelled":
+      invariant(ctx.security !== undefined, "attack-repelled goal requires a security engine");
+      return !ctx.security.simulateAttack(ctx.city, goal.attack).breached;
     case "all":
       return goal.goals.every((g) => evaluateGoal(g, ctx));
     case "any":

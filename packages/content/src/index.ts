@@ -9,4 +9,5 @@ export {
   addInternetGatewayPuzzle,
   fixPublicDatabasePuzzle,
   rightSizeInstancePuzzle,
+  repelDataBreachPuzzle,
 } from "./puzzles";
