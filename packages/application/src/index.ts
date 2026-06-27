@@ -11,3 +11,6 @@ export {
   type CommandResult,
   type PuzzleStatus,
 } from "./modes/puzzle/puzzle-controller";
+
+export { SandboxController, type SandboxResult } from "./modes/sandbox/sandbox-controller";
+export type { StoragePort } from "./storage/storage-port";

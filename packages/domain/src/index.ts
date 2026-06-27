@@ -48,6 +48,16 @@ export {
 } from "./simulation/world-state";
 export { EventBus, type Listener } from "./simulation/event-bus";
 
+// Serialization (save/load)
+export { serializeCity, deserializeCity } from "./serialization/serialize";
+export { migrate } from "./serialization/migrate";
+export {
+  SCHEMA_VERSION,
+  type CitySnapshot,
+  type SerializedService,
+  type SerializedConnection,
+} from "./serialization/snapshot";
+
 // Registry (the extensibility keystone)
 export { ServiceRegistry } from "./registry/service-registry";
 export type {
