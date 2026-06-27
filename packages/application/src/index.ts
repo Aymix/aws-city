@@ -15,3 +15,6 @@ export {
 
 export { SandboxController, type SandboxResult } from "./modes/sandbox/sandbox-controller";
 export type { StoragePort } from "./storage/storage-port";
+
+export type { Incident } from "./modes/incident/incident";
+export { IncidentSession, type IncidentResult } from "./modes/incident/incident-session";

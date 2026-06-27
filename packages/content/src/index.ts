@@ -3,6 +3,7 @@
 export { awsServiceDefinitions, createAwsRegistry } from "./aws";
 export { awsValidationRules, createAwsValidationEngine } from "./aws/rules";
 export { buildPublicWebServer, buildPrivateDatabase } from "./topologies/reference";
+export { incidents, sshExposureIncident } from "./incidents";
 export {
   puzzles,
   fixSecurityGroupPuzzle,
